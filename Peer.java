@@ -106,16 +106,16 @@ class Connection implements Runnable {
 			*/
 			Scanner sc = new Scanner(command);
 			String  op = sc.next();
-			int port = Integer.parseInt(sc.next());    
+			String ip = sc.next();    
 			/*
 			* execute op
 			*/
 			switch(op) {
-				case "register": Server.register(regIp); break;
+				case "register": Server.register(ip); break;
 				case "push": Server.push(); break;
 				case "pull": Server.pull(); break;
 				case "pushpull": Server.push(); Server.pull(); break;
-				case "registers": Server.registers(regIp); break;
+				case "registers": Server.registers(ip); break;
 			}  
 			/*
 			* send result
@@ -156,7 +156,7 @@ class Client implements Runnable {
 					/* 
 					* make connection
 					*/
-					Socket socket  = new Socket(InetAddress.getByName("localhost"), serverPort);
+					Socket socket  = new Socket(InetAddress.getByName(host), serverPort);
 					/*
 					* prepare socket I/O channels
 					*/
