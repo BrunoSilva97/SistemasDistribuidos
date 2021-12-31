@@ -9,6 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.LinkedList;
+import java.util.concurrent.*;
+import java.util.Random;
 
 public class Peer {
     String host;
@@ -33,6 +35,8 @@ class Server implements Runnable {
 	static LinkedList<String> dictionary = new LinkedList<String>();
 	static String[] words = {"ability","able","about","above","accept","according","account","across","act","action","activity","actually","add","address","administration","admit","adult","affect","after","again","against","age","agency","agent","ago","agree","agreement","ahead","air","all","allow","almost","alone","along","already","also","although","always","American","among","amount","analysis","and","animal","another","answer","any","anyone","anything","appear","apply","approach","area","argue","arm","around","arrive","art","article","artist","as","ask","assume","at","attack","attention","attorney","audience","author","authority","available","avoid","away","baby","back","bad","bag","ball","bank","bar","base","be","beat","beautiful","because","become","bed","before","begin","behavior","behind","believe","benefit","best","better","between","beyond","big","bill","billion","bit","black","blood","blue","board","body","book","born","both","box","boy","break","bring","brother","budget","build","building","business","but","buy","by","call","camera","campaign","can"};
     
+	long startTime = System.currentTimeMillis();
+
     public Server(String host, int port) throws Exception {
 		this.host   = host;
 		this.port   = port;
@@ -46,19 +50,29 @@ class Server implements Runnable {
 		output.println(String.valueOf("registers " + host));
 		output.flush();
 		nextPeer.close();
-		System.out.println("REGISTER");
 	}
 
 	public static void registers(String regIp) throws Exception{
 		ips.add(regIp);
-		System.out.println("AQUI");
+		System.out.println(regIp + " adicionado lista");
 	}
 
 	public static void pull(){
+		for(int i = 0; i < dictionary.size(); i++){
+			System.out.println(dictionary.get(i));
+		}
 		System.out.println("PULL");
 	}
 
-	public static void push(){
+	public static void push(String regIp) throws Exception{
+		Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
+		PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
+		output.println(String.valueOf("pusher "));
+		for(int i = 0; i < dictionary.size(); i++){
+			output.println(String.valueOf(dictionary.get(i) + " "));
+		}
+		output.flush();
+		nextPeer.close();
 		System.out.println("PUSH");
 	}
 
@@ -66,6 +80,13 @@ class Server implements Runnable {
     public void run() {
 		try {
 			while(true) {
+				if(System.currentTimeMillis() - startTime >= 10000){
+					Random ran = new Random();
+					int r = ran.nextInt(words.length);
+					if(!dictionary.contains(words[r]))
+						dictionary.add(words[r]);
+					startTime = System.currentTimeMillis();
+				}			
 				try {
 					Socket client = server.accept();
 					String clientAddress = client.getInetAddress().getHostAddress();
@@ -100,22 +121,32 @@ class Connection implements Runnable {
 			PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 		
 			String command;
+			String ip;
 			command = in.readLine();
 			/*
 			* parse command
 			*/
 			Scanner sc = new Scanner(command);
 			String  op = sc.next();
-			String ip = sc.next();    
+			  
 			/*
 			* execute op
 			*/
 			switch(op) {
-				case "register": Server.register(ip); break;
-				case "push": Server.push(); break;
+				case "register": ip = sc.next(); Server.register(ip); break;
+				case "push": ip = sc.next(); Server.push(ip); break;
 				case "pull": Server.pull(); break;
-				case "pushpull": Server.push(); Server.pull(); break;
-				case "registers": Server.registers(ip); break;
+				//case "pushpull": Server.push(); Server.pull(); break;
+				case "registers": ip = sc.next(); Server.registers(ip); break;
+			}
+			
+			if(op =="pusher"){
+				String[] arr = command.split(" ");
+				for(int i = 0; i < arr.length;i++){
+					if(!Server.dictionary.contains(arr[i])){
+						Server.dictionary.add(arr[i]);
+					}
+				}
 			}  
 			/*
 			* send result
