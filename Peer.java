@@ -29,7 +29,7 @@ class Server implements Runnable {
     static String       host;
     static int          port;
     ServerSocket server;
-	static LinkedList<Integer> ips = new LinkedList<Integer>();
+	static LinkedList<String> ips = new LinkedList<String>();
 	static LinkedList<String> dictionary = new LinkedList<String>();
 	static String[] words = {"ability","able","about","above","accept","according","account","across","act","action","activity","actually","add","address","administration","admit","adult","affect","after","again","against","age","agency","agent","ago","agree","agreement","ahead","air","all","allow","almost","alone","along","already","also","although","always","American","among","amount","analysis","and","animal","another","answer","any","anyone","anything","appear","apply","approach","area","argue","arm","around","arrive","art","article","artist","as","ask","assume","at","attack","attention","attorney","audience","author","authority","available","avoid","away","baby","back","bad","bag","ball","bank","bar","base","be","beat","beautiful","because","become","bed","before","begin","behavior","behind","believe","benefit","best","better","between","beyond","big","bill","billion","bit","black","blood","blue","board","body","book","born","both","box","boy","break","bring","brother","budget","build","building","business","but","buy","by","call","camera","campaign","can"};
     
@@ -39,18 +39,18 @@ class Server implements Runnable {
         server = new ServerSocket(port, 1, InetAddress.getByName(host));
     }
 
-	public static void register(int regPort) throws Exception{
-		ips.add(regPort);
-		Socket nextPeer  = new Socket(InetAddress.getByName(host), regPort);
+	public static void register(String regIp) throws Exception{
+		ips.add(regIp);
+		Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
 		PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
-		output.println(String.valueOf("registers " + port));
+		output.println(String.valueOf("registers " + host));
 		output.flush();
 		nextPeer.close();
 		System.out.println("REGISTER");
 	}
 
-	public static void registers(int regPort) throws Exception{
-		ips.add(regPort);
+	public static void registers(String regIp) throws Exception{
+		ips.add(regIp);
 		System.out.println("AQUI");
 	}
 
@@ -111,11 +111,11 @@ class Connection implements Runnable {
 			* execute op
 			*/
 			switch(op) {
-				case "register": Server.register(port); break;
+				case "register": Server.register(regIp); break;
 				case "push": Server.push(); break;
 				case "pull": Server.pull(); break;
 				case "pushpull": Server.push(); Server.pull(); break;
-				case "registers": Server.registers(port); break;
+				case "registers": Server.registers(regIp); break;
 			}  
 			/*
 			* send result
