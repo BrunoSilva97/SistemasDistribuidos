@@ -67,9 +67,9 @@ class Server implements Runnable {
 	public static void push(String regIp) throws Exception{
 		Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
 		PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
-		output.println(String.valueOf("pusher "));
+		output.append("pusher ");
 		for(int i = 0; i < dictionary.size(); i++){
-			output.println(String.valueOf(dictionary.get(i) + " "));
+			output.append(dictionary.get(i) + " ");
 		}
 		output.flush();
 		nextPeer.close();
@@ -128,7 +128,7 @@ class Connection implements Runnable {
 			*/
 			Scanner sc = new Scanner(command);
 			String  op = sc.next();
-			System.out.println(command);
+			System.out.println("REPETE: " + command);
 			/*
 			* execute op
 			*/
@@ -146,7 +146,7 @@ class Connection implements Runnable {
 						Server.dictionary.add(val);
 					}
 				}
-
+				System.out.println("TESTE");
 				/*String[] arr = sc.nextLine().split(" ");
 				for(int i = 0; i < arr.length;i++){
 					if(!Server.dictionary.contains(arr[i])){
