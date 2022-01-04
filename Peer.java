@@ -57,23 +57,30 @@ class Server implements Runnable {
 		System.out.println(regIp + " adicionado lista");
 	}
 
-	public static void pull(){
+	public static void see(){
 		for(int i = 0; i < dictionary.size(); i++){
 			System.out.println(dictionary.get(i));
 		}
-		System.out.println("PULL");
 	}
 
-	public static void push(String regIp) throws Exception{
+	public static void pull(String regIp) throws Exception{
 		Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
 		PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
-		output.append("pusher ");
 		for(int i = 0; i < dictionary.size(); i++){
 			output.append(dictionary.get(i) + " ");
 		}
 		output.flush();
 		nextPeer.close();
-		System.out.println("PUSH");
+	}
+
+	public static void push(String regIp) throws Exception{
+		Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
+		PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
+		for(int i = 0; i < dictionary.size(); i++){
+			output.append(dictionary.get(i) + " ");
+		}
+		output.flush();
+		nextPeer.close();
 	}
 
     @Override
@@ -128,34 +135,24 @@ class Connection implements Runnable {
 			*/
 			Scanner sc = new Scanner(command);
 			String  op = sc.next();
-			System.out.println("REPETE: " + command);
 			/*
 			* execute op
 			*/
 			switch(op) {
 				case "register": ip = sc.next(); Server.register(ip); break;
 				case "push": ip = sc.next(); Server.push(ip); break;
-				case "pull": Server.pull(); break;
+				case "pull": ip = sc.next(); Server.pull(ip); break;
 				//case "pushpull": Server.push(); Server.pull(); break;
 				case "registers": ip = sc.next(); Server.registers(ip); break;
+				case "see": Server.see(); break;
+				default: {
+					for(String val: command.split(" ")){
+						if(!Server.dictionary.contains(val)){
+							Server.dictionary.add(val);
+						}
+					}
+				}
 			}
-			
-			if(op == "pusher"){
-				for(String val: command.split(" ")){
-					if(!Server.dictionary.contains(val)){
-						Server.dictionary.add(val);
-					}
-				}
-				System.out.println("TESTE");
-				/*String[] arr = sc.nextLine().split(" ");
-				for(int i = 0; i < arr.length;i++){
-					if(!Server.dictionary.contains(arr[i])){
-						Server.dictionary.add(arr[i]);
-					}
-					System.out.println("AQUI");
-				}
-				*/
-			} 
 			
 			/*
 			* send result
