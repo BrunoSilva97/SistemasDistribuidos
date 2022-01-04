@@ -52,10 +52,11 @@ class Server implements Runnable {
 		nextPeer.close();
 	}
 
+	/*
 	public static void registers(String regIp) throws Exception{
 		ips.add(regIp);
 		System.out.println(regIp + " adicionado lista");
-	}
+	}*/
 
 	public static void see(){
 		for(int i = 0; i < dictionary.size(); i++){
@@ -71,6 +72,7 @@ class Server implements Runnable {
 		nextPeer.close();
 	}
 
+	/*
 	public static void puller(String regIp) throws Exception{
 		Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
 		PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
@@ -79,7 +81,7 @@ class Server implements Runnable {
 		}
 		output.flush();
 		nextPeer.close();
-	}
+	}*/
 
 	public static void push(String regIp) throws Exception{
 		Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
@@ -143,18 +145,34 @@ class Connection implements Runnable {
 			*/
 			Scanner sc = new Scanner(command);
 			String  op = sc.next();
+			System.out.println("OPERATOR: " + op);
 			/*
 			* execute op
 			*/
+
 			switch(op) {
 				case "register": ip = sc.next(); Server.register(ip); break;
 				case "push": ip = sc.next(); Server.push(ip); break;
 				case "pull": ip = sc.next(); Server.pull(ip); break;
 				case "pushpull": ip = sc.next(); Server.push(ip); Server.pull(ip); break;
-				case "puller": ip = sc.next(); Server.puller(ip); break;
-				case "registers": ip = sc.next(); Server.registers(ip); break;
+				//case "puller": ip = sc.next(); Server.puller(ip); break;
+				//case "registers": ip = sc.next(); Server.registers(ip); break;
 				case "see": Server.see(); break;
 				default: {
+					if(op.equals("registers")){
+						ips.add(regIp);
+						System.out.println(regIp + " adicionado lista");
+					}
+					else if(op.equals("puller")){
+						Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
+						PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
+						for(int i = 0; i < dictionary.size(); i++){
+							output.append(dictionary.get(i) + " ");
+						}
+						output.flush();
+						nextPeer.close();
+					}
+
 					for(String val: command.split(" ")){
 						if(!Server.dictionary.contains(val)){
 							Server.dictionary.add(val);
