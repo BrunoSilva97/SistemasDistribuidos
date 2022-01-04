@@ -150,7 +150,7 @@ class Connection implements Runnable {
 				case "register": ip = sc.next(); Server.register(ip); break;
 				case "push": ip = sc.next(); Server.push(ip); break;
 				case "pull": ip = sc.next(); Server.pull(ip); break;
-				//case "pushpull": Server.push(); Server.pull(); break;
+				case "pushpull": ip = sc.next(); Server.push(ip); Server.pull(ip); break;
 				case "puller": ip = sc.next(); Server.puller(ip); break;
 				case "registers": ip = sc.next(); Server.registers(ip); break;
 				case "see": Server.see(); break;
