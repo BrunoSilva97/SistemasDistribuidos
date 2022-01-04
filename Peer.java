@@ -128,7 +128,7 @@ class Connection implements Runnable {
 			*/
 			Scanner sc = new Scanner(command);
 			String  op = sc.next();
-			  
+			System.out.println(command);
 			/*
 			* execute op
 			*/
@@ -140,14 +140,23 @@ class Connection implements Runnable {
 				case "registers": ip = sc.next(); Server.registers(ip); break;
 			}
 			
-			if(op =="pusher"){
-				String[] arr = command.split(" ");
+			if(op == "pusher"){
+				for(String val: command.split(" ")){
+					if(!Server.dictionary.contains(val)){
+						Server.dictionary.add(val);
+					}
+				}
+
+				/*String[] arr = sc.nextLine().split(" ");
 				for(int i = 0; i < arr.length;i++){
 					if(!Server.dictionary.contains(arr[i])){
 						Server.dictionary.add(arr[i]);
 					}
+					System.out.println("AQUI");
 				}
-			}  
+				*/
+			} 
+			
 			/*
 			* send result
 			*/
