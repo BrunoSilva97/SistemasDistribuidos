@@ -160,14 +160,16 @@ class Connection implements Runnable {
 				case "see": Server.see(); break;
 				default: {
 					if(op.equals("registers")){
-						ips.add(regIp);
-						System.out.println(regIp + " adicionado lista");
+						ip = sc.next();
+						Server.ips.add(ip);
+						System.out.println(ip + " adicionado lista");
 					}
 					else if(op.equals("puller")){
-						Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
+						ip = sc.next();
+						Socket nextPeer  = new Socket(InetAddress.getByName(ip), Server.port);
 						PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
-						for(int i = 0; i < dictionary.size(); i++){
-							output.append(dictionary.get(i) + " ");
+						for(int i = 0; i < Server.dictionary.size(); i++){
+							output.append(Server.dictionary.get(i) + " ");
 						}
 						output.flush();
 						nextPeer.close();
