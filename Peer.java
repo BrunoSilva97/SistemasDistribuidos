@@ -145,7 +145,6 @@ class Connection implements Runnable {
 			*/
 			Scanner sc = new Scanner(command);
 			String  op = sc.next();
-			System.out.println("OPERATOR: " + op);
 			/*
 			* execute op
 			*/
@@ -174,10 +173,11 @@ class Connection implements Runnable {
 						output.flush();
 						nextPeer.close();
 					}
-
-					for(String val: command.split(" ")){
-						if(!Server.dictionary.contains(val)){
-							Server.dictionary.add(val);
+					else{
+						for(String val: command.split(" ")){
+							if(!Server.dictionary.contains(val)){
+								Server.dictionary.add(val);
+							}	
 						}
 					}
 				}
