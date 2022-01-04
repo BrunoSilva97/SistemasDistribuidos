@@ -66,6 +66,14 @@ class Server implements Runnable {
 	public static void pull(String regIp) throws Exception{
 		Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
 		PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
+		output.println(String.valueOf("puller " + host));
+		output.flush();
+		nextPeer.close();
+	}
+
+	public static void puller(String regIp) throws Exception{
+		Socket nextPeer  = new Socket(InetAddress.getByName(regIp), port);
+		PrintWriter   output = new PrintWriter(nextPeer.getOutputStream(), true);
 		for(int i = 0; i < dictionary.size(); i++){
 			output.append(dictionary.get(i) + " ");
 		}
@@ -143,6 +151,7 @@ class Connection implements Runnable {
 				case "push": ip = sc.next(); Server.push(ip); break;
 				case "pull": ip = sc.next(); Server.pull(ip); break;
 				//case "pushpull": Server.push(); Server.pull(); break;
+				case "puller": ip = sc.next(); Server.puller(ip); break;
 				case "registers": ip = sc.next(); Server.registers(ip); break;
 				case "see": Server.see(); break;
 				default: {
